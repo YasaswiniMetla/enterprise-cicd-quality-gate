@@ -31,7 +31,7 @@ pipeline {
 
         stage('Validate Source') {
             steps {
-                bat '%VENV_PYTHON% -m py_compile app\\*.py'
+                bat '%VENV_PYTHON% -m py_compile app\\service.py'
                 bat '%VENV_PYTHON% -m flake8 app tests'
             }
         }
