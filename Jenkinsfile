@@ -63,7 +63,7 @@ pipeline {
 
         stage('Deployment Validation') {
             steps {
-                bat '%VENV_PYTHON% scripts\\deployment_smoke_test.py'
+                bat 'set "PYTHONPATH=%WORKSPACE%" && %VENV_PYTHON% scripts\\deployment_smoke_test.py'
             }
         }
 
