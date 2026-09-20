@@ -31,3 +31,5 @@ pytest --junitxml=reports/junit.xml --cov=app --cov-report=xml:reports/coverage.
 Create a Pipeline job and point it to this repository. The included `Jenkinsfile` runs the complete workflow.
 
 The pipeline is intentionally technology-light so the same quality-gate pattern can be adapted to Java, .NET, UI automation, or API automation projects.
+<img width="2880" height="1509" alt="image" src="https://github.com/user-attachments/assets/53276ca5-b642-485e-9f74-1242c6a27ba6" />
+
