@@ -10,6 +10,8 @@ pipeline {
     environment {
         APP_NAME = 'quality-gate-demo'
         COVERAGE_MIN = '80'
+        PYTHON = 'C:\\Users\\Yasaswini\\AppData\\Local\\Programs\\Python\\Python311\\python.exe'
+        VENV_PYTHON = '.venv\\Scripts\\python.exe'
     }
 
     stages {
@@ -19,17 +21,25 @@ pipeline {
             }
         }
 
+        stage('Environment Setup') {
+            steps {
+                bat 'if not exist .venv "%PYTHON%" -m venv .venv'
+                bat '%VENV_PYTHON% -m pip install --upgrade pip'
+                bat '%VENV_PYTHON% -m pip install -r requirements.txt'
+            }
+        }
+
         stage('Validate Source') {
             steps {
-                bat 'python -m py_compile app/*.py'
-                bat 'python -m flake8 app tests'
+                bat '%VENV_PYTHON% -m py_compile app\\*.py'
+                bat '%VENV_PYTHON% -m flake8 app tests'
             }
         }
 
         stage('Automated Tests') {
             steps {
                 bat 'if not exist reports mkdir reports'
-                bat 'python -m pytest tests --junitxml=reports/junit.xml --cov=app --cov-report=xml:reports/coverage.xml --cov-report=term --cov-fail-under=%COVERAGE_MIN%'
+                bat '%VENV_PYTHON% -m pytest tests --junitxml=reports\\junit.xml --cov=app --cov-report=xml:reports\\coverage.xml --cov-report=term --cov-fail-under=%COVERAGE_MIN%'
             }
             post {
                 always {
@@ -40,11 +50,6 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                script {
-                    if (currentBuild.currentResult == 'FAILURE') {
-                        error('Quality gate failed. Build cannot proceed.')
-                    }
-                }
                 echo "Quality gate passed: coverage >= ${env.COVERAGE_MIN}%"
             }
         }
@@ -58,7 +63,7 @@ pipeline {
 
         stage('Deployment Validation') {
             steps {
-                bat 'python scripts/deployment_smoke_test.py'
+                bat '%VENV_PYTHON% scripts\\deployment_smoke_test.py'
             }
         }
 
